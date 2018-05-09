@@ -33,6 +33,13 @@ let numRows = 9
 
 class Level {
   private var cookies = Array2D<Cookie>(columns: numColumns, rows: numRows)
+  private var tiles = Array2D<Tile>(columns: numColumns, rows: numRows)
+  
+  func tileAt(column: Int, row: Int) -> Tile? {
+    precondition(column >= 0 && column < numColumns)
+    precondition(row >= 0 && row < numRows)
+    return tiles[column, row]
+  }
   
   func cookie(atColumn column: Int, row: Int) -> Cookie? {
     precondition(column >= 0 && column < numColumns)
