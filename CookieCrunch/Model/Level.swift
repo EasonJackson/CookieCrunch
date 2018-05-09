@@ -35,6 +35,24 @@ class Level {
   private var cookies = Array2D<Cookie>(columns: numColumns, rows: numRows)
   private var tiles = Array2D<Tile>(columns: numColumns, rows: numRows)
   
+  init(filename: String) {
+    // 1
+    guard let levelData = LevelData.loadFrom(file: filename) else { return }
+    // 2
+    let tilesArray = levelData.tiles
+    // 3
+    for (row, rowArray) in tilesArray.enumerated() {
+      // 4
+      let tileRow = numRows - row - 1
+      // 5
+      for (column, value) in rowArray.enumerated() {
+        if value == 1 {
+          tiles[column, tileRow] = Tile()
+        }
+      }
+    }
+  }
+  
   func tileAt(column: Int, row: Int) -> Tile? {
     precondition(column >= 0 && column < numColumns)
     precondition(row >= 0 && row < numRows)
@@ -57,16 +75,16 @@ class Level {
     // 1
     for row in 0..<numRows {
       for column in 0..<numColumns {
-        
-        // 2
-        let cookieType = CookieType.random()
-        
-        // 3
-        let cookie = Cookie(column: column, row: row, cookieType: cookieType)
-        cookies[column, row] = cookie
-        
-        // 4
-        set.insert(cookie)
+        if tiles[column, row] != nil {
+          // 2
+          let cookieType = CookieType.random()
+          
+          // 3
+          let cookie = Cookie(column: column, row: row, cookieType: cookieType)
+          cookies[column, row] = cookie
+          // 4
+          set.insert(cookie)
+        }
       }
     }
     return set

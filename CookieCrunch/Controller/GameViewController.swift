@@ -44,15 +44,6 @@ class GameViewController: UIViewController {
   var movesLeft = 0
   var score = 0
   
-  func beginGame() {
-    shuffle()
-  }
-  
-  func shuffle() {
-    let newCookies = level.shuffle()
-    scene.addSprites(for: newCookies)
-  }
-  
   // Create a variable of background music player
   // Initialization is in a closure
   // lazy marks the closure won't 
@@ -76,6 +67,15 @@ class GameViewController: UIViewController {
   @IBOutlet weak var scoreLabel: UILabel!
   @IBOutlet weak var shuffleButton: UIButton!
   
+  func beginGame() {
+    shuffle()
+  }
+  
+  func shuffle() {
+    let newCookies = level.shuffle()
+    scene.addSprites(for: newCookies)
+  }
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -87,11 +87,12 @@ class GameViewController: UIViewController {
     scene = GameScene(size: skView.bounds.size)
     scene.scaleMode = .aspectFill
     
-    level = Level()
+    level = Level(filename: "Level_1")
     scene.level = level
     
     // Present the scene.
     skView.presentScene(scene)
+    scene.addTiles()
     
     beginGame()
   }
