@@ -154,6 +154,10 @@ class Level {
     possibleSwaps = set
   }
   
+  func isPossibleSwap(_ swap: Swap) -> Bool {
+    return possibleSwaps.contains(swap)
+  }
+  
   func performSwap(_ swap: Swap) {
     let columnA = swap.cookieA.column
     let rowA = swap.cookieA.row

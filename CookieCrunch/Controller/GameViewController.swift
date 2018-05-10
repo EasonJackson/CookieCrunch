@@ -102,9 +102,13 @@ class GameViewController: UIViewController {
   func handleSwipe(_ swap: Swap) {
     view.isUserInteractionEnabled = false
     
-    level.performSwap(swap)
-    scene.animate(swap) {
-      self.view.isUserInteractionEnabled = true
+    if level.isPossibleSwap(swap) {
+      level.performSwap(swap)
+      scene.animate(swap) {
+        self.view.isUserInteractionEnabled = true
+      }
+    } else {
+      view.isUserInteractionEnabled = true
     }
   }
   
