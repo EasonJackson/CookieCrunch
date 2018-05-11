@@ -114,6 +114,11 @@ class GameViewController: UIViewController {
     }
   }
   
+  func handleMatches() {
+    let chains = level.removeMatches()
+    // TODO: do something with the chains set
+  }
+  
   // MARK: IBActions
   @IBAction func shuffleButtonPressed(_: AnyObject) {
     
