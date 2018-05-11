@@ -63,6 +63,7 @@ class Chain: Hashable, CustomStringConvertible {
     return cookies.count
   }
   
+  
   var description: String {
     return "type:\(chainType) cookies:\(cookies)"
   }
