@@ -142,6 +142,7 @@
 		6F0D415620A263550026C403 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				6F0D415920A3C5720026C403 /* Swap.swift */,
 				17A7E59C1FB528160044C48F /* Tile.swift */,
 				1769DFF81FE3818B00F99A23 /* LevelData.swift */,
 				1769DFFA1FE383BA00F99A23 /* Array2D.swift */,
@@ -163,7 +164,6 @@
 		6F0D415820A263A80026C403 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				6F0D415920A3C5720026C403 /* Swap.swift */,
 				17A7E5791FB513CC0044C48F /* GameViewController.swift */,
 			);
 			path = Controller;

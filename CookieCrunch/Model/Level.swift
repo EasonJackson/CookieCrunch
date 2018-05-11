@@ -84,7 +84,7 @@ class Level {
     for row in 0..<numRows {
       for column in 0..<numColumns {
         if tiles[column, row] != nil {
-          // 2
+          // 2. Generate random cookie type without making a chain of three.
           var cookieType: CookieType
           repeat {
             cookieType = CookieType.random()
