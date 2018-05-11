@@ -71,7 +71,7 @@ class Level {
     repeat {
       set = createInitialCookies()
       detectPossibleSwaps()
-      print("possible swaps: \(possibleSwaps)")
+      //print("possible swaps: \(possibleSwaps)")
     } while possibleSwaps.count == 0
     
     return set
@@ -289,6 +289,37 @@ class Level {
         cookies[cookie.column, cookie.row] = nil
       }
     }
+  }
+  
+  func fillHoles() -> [[Cookie]] {
+    var columns: [[Cookie]] = []
+    // 1
+    for column in 0..<numColumns {
+      var array: [Cookie] = []
+      for row in 0..<numRows {
+        // 2
+        if tiles[column, row] != nil && cookies[column, row] == nil {
+          // 3
+          for lookup in (row + 1)..<numRows {
+            if let cookie = cookies[column, lookup] {
+              // 4
+              cookies[column, lookup] = nil
+              cookies[column, row] = cookie
+              cookie.row = row
+              // 5
+              array.append(cookie)
+              // 6
+              break
+            }
+          }
+        }
+      }
+      // 7
+      if !array.isEmpty {
+        columns.append(array)
+      }
+    }
+    return columns
   }
 }
 
