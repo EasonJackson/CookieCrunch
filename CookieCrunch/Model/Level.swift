@@ -275,8 +275,10 @@ class Level {
     let horizontalChains = detectHorizontalMatches()
     let verticalChains = detectVerticalMatches()
     
-    print("Horizontal matches: \(horizontalChains)")
-    print("Vertical matches: \(verticalChains)")
+    //print("Horizontal matches: \(horizontalChains)")
+    //print("Vertical matches: \(verticalChains)")
+    removeCookies(in: horizontalChains)
+    removeCookies(in: verticalChains)
     
     return horizontalChains.union(verticalChains)
   }
