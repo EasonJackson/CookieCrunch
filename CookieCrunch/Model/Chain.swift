@@ -26,56 +26,52 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import SpriteKit
-
-// MARK: - CookieType
-enum CookieType: Int {
-  case unknown = 0, croissant, cupcake, danish, donut, macaroon, sugarCookie
+class Chain: Hashable, CustomStringConvertible {
+  var cookies: [Cookie] = []
   
-  var spriteName: String {
-    let spriteNames = [
-      "Croissant",
-      "Cupcake",
-      "Danish",
-      "Donut",
-      "Macaroon",
-      "SugarCookie"]
+  enum ChainType: CustomStringConvertible {
+    case horizontal
+    case vertical
     
-    return spriteNames[rawValue - 1]
+    var description: String {
+      switch self {
+      case .horizontal: return "Horizontal"
+      case .vertical: return "Vertical"
+      }
+    }
   }
   
-  var highlightedSpriteName: String {
-    return spriteName + "-Highlighted"
+  var chainType: ChainType
+  
+  init(chainType: ChainType) {
+    self.chainType = chainType
   }
   
-  static func random() -> CookieType {
-    return CookieType(rawValue: Int(arc4random_uniform(6)) + 1)!
+  func add(cookie: Cookie) {
+    cookies.append(cookie)
   }
-}
-
-// MARK: - Cookie
-class Cookie: CustomStringConvertible, Hashable {
-  let cookieType: CookieType
-  var column: Int
-  var row: Int
-  var sprite: SKSpriteNode?
+  
+  func firstCookie() -> Cookie {
+    return cookies[0]
+  }
+  
+  func lastCookie() -> Cookie {
+    return cookies[cookies.count - 1]
+  }
+  
+  var length: Int {
+    return cookies.count
+  }
   
   var description: String {
-    return "type:\(cookieType) square:(\(column),\(row))"
+    return "type:\(chainType) cookies:\(cookies)"
   }
   
   var hashValue: Int {
-    return row * 10 + column
+    return cookies.reduce (0) { $0.hashValue ^ $1.hashValue }
   }
   
-  init(column: Int, row: Int, cookieType: CookieType) {
-    self.column = column
-    self.row = row
-    self.cookieType = cookieType
-  }
-  
-  static func ==(lhs: Cookie, rhs: Cookie) -> Bool {
-    return lhs.column == rhs.column && lhs.row == rhs.row
-    
+  static func ==(lhs: Chain, rhs: Chain) -> Bool {
+    return lhs.cookies == rhs.cookies
   }
 }
