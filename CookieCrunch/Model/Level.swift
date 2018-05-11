@@ -243,5 +243,32 @@ class Level {
     }
     return set
   }
+  
+  private func detectVerticalMatches() -> Set<Chain> {
+    var set: Set<Chain> = []
+    
+    for column in 0..<numColumns {
+      var row = 0
+      while row < numRows-2 {
+        if let cookie = cookies[column, row] {
+          let matchType = cookie.cookieType
+          
+          if cookies[column, row + 1]?.cookieType == matchType &&
+            cookies[column, row + 2]?.cookieType == matchType {
+            let chain = Chain(chainType: .vertical)
+            repeat {
+              chain.add(cookie: cookies[column, row]!)
+              row += 1
+            } while row < numRows && cookies[column, row]?.cookieType == matchType
+            
+            set.insert(chain)
+            continue
+          }
+        }
+        row += 1
+      }
+    }
+    return set
+  }
 }
 
