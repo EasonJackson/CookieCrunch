@@ -35,6 +35,8 @@ class Level {
   private var cookies = Array2D<Cookie>(columns: numColumns, rows: numRows)
   private var tiles = Array2D<Tile>(columns: numColumns, rows: numRows)
   private var possibleSwaps: Set<Swap> = []
+  var score = 0
+  var moves = 0
   
   init(filename: String) {
     // 1

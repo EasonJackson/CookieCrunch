@@ -41,7 +41,7 @@ class GameViewController: UIViewController {
   // The scene draws the tiles and cookie sprites, and handles swipes.
   var scene: GameScene!
   var level: Level!
-  var movesLeft = 0
+  var movesUsed = 0
   var score = 0
   
   // Create a variable of background music player
@@ -68,6 +68,7 @@ class GameViewController: UIViewController {
   @IBOutlet weak var shuffleButton: UIButton!
   
   func beginGame() {
+    updateLabels()
     shuffle()
   }
   
@@ -132,6 +133,12 @@ class GameViewController: UIViewController {
   func beginNextTurn() {
     level.detectPossibleSwaps()
     view.isUserInteractionEnabled = true
+  }
+  
+  func updateLabels() {
+    //targetLabel.text = String(format: "%ld", )
+    movesLabel.text = String(format: "%ld", movesUsed)
+    scoreLabel.text = String(format: "%ld", score)
   }
   
   // MARK: IBActions
