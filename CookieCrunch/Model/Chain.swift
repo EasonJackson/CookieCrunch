@@ -28,6 +28,7 @@
 
 class Chain: Hashable, CustomStringConvertible {
   var cookies: [Cookie] = []
+  var score = 0
   
   enum ChainType: CustomStringConvertible {
     case horizontal
@@ -62,7 +63,6 @@ class Chain: Hashable, CustomStringConvertible {
   var length: Int {
     return cookies.count
   }
-  
   
   var description: String {
     return "type:\(chainType) cookies:\(cookies)"
