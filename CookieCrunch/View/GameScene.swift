@@ -87,6 +87,8 @@ class GameScene: SKScene {
     
     cookiesLayer.position = layerPosition
     cropLayer.addChild(cookiesLayer)
+    let _ = SKLabelNode(fontNamed: "GillSans-BoldItalic")
+
   }
   
   func addSprites(for cookies: Set<Cookie>) {
@@ -305,6 +307,7 @@ class GameScene: SKScene {
 
   func animateMatchedCookies(for chains: Set<Chain>, completion: @escaping () -> Void) {
     for chain in chains {
+      animateScore(for: chain)
       for cookie in chain.cookies {
         if let sprite = cookie.sprite {
           if sprite.action(forKey: "removing") == nil {
