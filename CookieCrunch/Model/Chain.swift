@@ -29,6 +29,7 @@
 class Chain: Hashable, CustomStringConvertible {
   var cookies: [Cookie] = []
   var score = 0
+  var lastSwapIn: Cookie
   
   enum ChainType: CustomStringConvertible {
     case horizontal
@@ -44,8 +45,9 @@ class Chain: Hashable, CustomStringConvertible {
   
   var chainType: ChainType
   
-  init(chainType: ChainType) {
+  init(chainType: ChainType, lastSwapIn: Cookie) {
     self.chainType = chainType
+    self.lastSwapIn = lastSwapIn
   }
   
   func add(cookie: Cookie) {
