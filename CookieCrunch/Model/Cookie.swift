@@ -30,7 +30,11 @@ import SpriteKit
 
 // MARK: - CookieType
 enum CookieType: Int {
-  case unknown = 0, croissant, cupcake, danish, donut, macaroon, sugarCookie
+  case unknown = 0, croissant, cupcake, danish, donut, macaroon, sugarCookie,
+  croissantLineH, cupcakeLineH, danishLineH, donutLineH, macaroonLineH, sugarCookieLineH,
+  croissantLineV, cupcakeLineV, danishLineV, donutLineV, macaroonLineV, sugarCookieLineV,
+  croissantSqr, cupcakeSqr, danishSqr, donutSqr, macaroonSqr, sugarCookieSqr,
+  powerCookie
   
   var spriteName: String {
     let spriteNames = [
@@ -39,7 +43,26 @@ enum CookieType: Int {
       "Danish",
       "Donut",
       "Macaroon",
-      "SugarCookie"]
+      "SugarCookie",
+      "CroissantLineH",
+      "CupcakeLineH",
+      "DanishLineH",
+      "DonutLineH",
+      "MacaroonLineH",
+      "SugarCookieLineH",
+      "CroissantLineV",
+      "CupcakeLineV",
+      "DanishLineV",
+      "DonutLineV",
+      "MacaroonLineV",
+      "SugarCookieLineV",
+      "CroissantSqr",
+      "CupcakeSqr",
+      "DanishSqr",
+      "DonutSqr",
+      "MacaroonSqr",
+      "SugarCookieSqr",
+      "PowerCookie"]
     
     return spriteNames[rawValue - 1]
   }
@@ -53,9 +76,26 @@ enum CookieType: Int {
   }
 }
 
+enum CookieMask: Int {
+  case Default = 0, block, frozen
+  
+  var maskName: String {
+    let maskNames = [
+      "Blocked",
+      "Frozen"
+    ]
+    return maskNames[rawValue - 1]
+  }
+  
+  static func random() -> CookieMask {
+    return CookieMask(rawValue: Int(arc4random_uniform(3)))!
+  }
+}
+
 // MARK: - Cookie
 class Cookie: CustomStringConvertible, Hashable {
   let cookieType: CookieType
+  var cookieMask: CookieMask = CookieMask.Default
   var column: Int
   var row: Int
   var sprite: SKSpriteNode?
