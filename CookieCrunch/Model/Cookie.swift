@@ -28,7 +28,38 @@
 
 import SpriteKit
 
-// MARK: - CookieType
+class Cookie: CustomStringConvertible, Hashable {
+  let cookieType: CookieType
+  var cookieMask: CookieMask = CookieMask.none
+  var column: Int
+  var row: Int
+  var isBlast: Bool
+  var blastType: BlastType
+  var sprite: SKSpriteNode?
+  
+  var description: String {
+    return "type:\(cookieType) square:(\(column),\(row))"
+  }
+  
+  var hashValue: Int {
+    return row * 10 + column
+  }
+  
+  init(column: Int, row: Int, cookieType: CookieType) {
+    self.column = column
+    self.row = row
+    self.cookieType = cookieType
+    self.isBlast = false
+    self.blastType = BlastType.none
+  }
+  
+  static func ==(lhs: Cookie, rhs: Cookie) -> Bool {
+    return lhs.column == rhs.column && lhs.row == rhs.row
+    
+  }
+}
+
+// ENUM CookieType
 enum CookieType: Int {
   case unknown = 0, croissant, cupcake, danish, donut, macaroon, sugarCookie,
   croissantLineH, cupcakeLineH, danishLineH, donutLineH, macaroonLineH, sugarCookieLineH,
@@ -71,14 +102,26 @@ enum CookieType: Int {
     return spriteName + "-Highlighted"
   }
   
+  func toVerticleBlast() -> String {
+    return spriteName + "LineV"
+  }
+  
+  func toHorizontalBlast() -> String {
+    return spriteName + "LineH"
+  }
+  
+  func toSqrBlast() -> String {
+    return spriteName + "Sqr"
+  }
+  
   static func random() -> CookieType {
     return CookieType(rawValue: Int(arc4random_uniform(6)) + 1)!
   }
 }
 
+// ENUM CookieMask
 enum CookieMask: Int {
-  case Default = 0, block, frozen
-  
+  case none = 0, block, frozen
   var maskName: String {
     let maskNames = [
       "Blocked",
@@ -92,39 +135,8 @@ enum CookieMask: Int {
   }
 }
 
+// ENUM Cookie BlastType
 enum BlastType: Int {
   case none = 0, vertical, horozontal, samekind
   
-}
-
-// MARK: - Cookie
-class Cookie: CustomStringConvertible, Hashable {
-  let cookieType: CookieType
-  var cookieMask: CookieMask = CookieMask.Default
-  var column: Int
-  var row: Int
-  var isBlast: Bool
-  var blastType: BlastType
-  var sprite: SKSpriteNode?
-  
-  var description: String {
-    return "type:\(cookieType) square:(\(column),\(row))"
-  }
-  
-  var hashValue: Int {
-    return row * 10 + column
-  }
-  
-  init(column: Int, row: Int, cookieType: CookieType) {
-    self.column = column
-    self.row = row
-    self.cookieType = cookieType
-    self.isBlast = false
-    self.blastType = BlastType.none
-  }
-  
-  static func ==(lhs: Cookie, rhs: Cookie) -> Bool {
-    return lhs.column == rhs.column && lhs.row == rhs.row
-    
-  }
 }

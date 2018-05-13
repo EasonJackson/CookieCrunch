@@ -28,7 +28,7 @@
 
 import Foundation
 
-class JointChain {
+struct JointChain {
   var verticleChain: Chain
   var horizontalChain: Chain
   var score = 0

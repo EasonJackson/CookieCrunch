@@ -26,6 +26,9 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
+// A swap pair of two cookies
+// CookieA: from cookie
+// COokieB: to cookie
 struct Swap: CustomStringConvertible, Hashable {
   let cookieA: Cookie
   let cookieB: Cookie
