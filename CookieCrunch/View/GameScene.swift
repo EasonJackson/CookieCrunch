@@ -410,6 +410,9 @@ class GameScene: SKScene {
     scoreLabel.run(SKAction.sequence([moveAction, SKAction.removeFromParent()]))
   }
 
+  func removeAllCookieSprites() {
+    cookiesLayer.removeAllChildren()
+  }
 }
 
 

@@ -35,7 +35,7 @@ class Level {
   private var cookies = Array2D<Cookie>(columns: numColumns, rows: numRows)
   private var tiles = Array2D<Tile>(columns: numColumns, rows: numRows)
   private var possibleSwaps: Set<Swap> = []
-  private var comboMultiplier = 0
+  private var comboMultiplier = 1
   var score = 0
   var moves = 0
   
@@ -254,8 +254,12 @@ class Level {
     return set
   }
   
-  private func findPowerCookies() {
-    
+  private func findPowerCookies(in chains: Set<Chain>) {
+    for chain in chains {
+      if chain.length > 3 {
+        
+      }
+    }
   }
   
   private func removeCookies(in chains: Set<Chain>) {
