@@ -52,18 +52,6 @@ class Level {
     }
   }
   
-  func tileAt(column: Int, row: Int) -> Tile? {
-    precondition(column >= 0 && column < numColumns)
-    precondition(row >= 0 && row < numRows)
-    return tiles[column, row]
-  }
-  
-  func cookie(atColumn column: Int, row: Int) -> Cookie? {
-    precondition(column >= 0 && column < numColumns)
-    precondition(row >= 0 && row < numRows)
-    return cookies[column, row]
-  }
-  
   func shuffle() -> Set<Cookie> {
     var set: Set<Cookie>
     repeat {
@@ -205,6 +193,17 @@ class Level {
     return verticalLength >= 3
   }
   
+  func removeMatches() -> Set<Chain> {
+    let horizontalChains = detectHorizontalMatches()
+    let verticalChains = detectVerticalMatches()
+    //findPowerCookies(for: horizontalChains)
+    removeCookies(in: horizontalChains)
+    removeCookies(in: verticalChains)
+    calculateScores(for: horizontalChains)
+    calculateScores(for: verticalChains)
+    return horizontalChains.union(verticalChains)
+  }
+  
   private func detectHorizontalMatches() -> Set<Chain> {
     var set: Set<Chain> = []
     for row in 0..<numRows {
@@ -255,15 +254,8 @@ class Level {
     return set
   }
   
-  func removeMatches() -> Set<Chain> {
-    let horizontalChains = detectHorizontalMatches()
-    let verticalChains = detectVerticalMatches()
+  private func findPowerCookies() {
     
-    removeCookies(in: horizontalChains)
-    removeCookies(in: verticalChains)
-    calculateScores(for: horizontalChains)
-    calculateScores(for: verticalChains)
-    return horizontalChains.union(verticalChains)
   }
   
   private func removeCookies(in chains: Set<Chain>) {
@@ -311,27 +303,20 @@ class Level {
     
     for column in 0..<numColumns {
       var array: [Cookie] = []
-      
-      // 1
       var row = numRows - 1
       while row >= 0 && cookies[column, row] == nil {
-        // 2
         if tiles[column, row] != nil {
-          // 3
           var newCookieType: CookieType
           repeat {
             newCookieType = CookieType.random()
           } while newCookieType == cookieType
           cookieType = newCookieType
-          // 4
           let cookie = Cookie(column: column, row: row, cookieType: cookieType)
           cookies[column, row] = cookie
           array.append(cookie)
         }
-        
         row -= 1
       }
-      // 5
       if !array.isEmpty {
         columns.append(array)
       }
@@ -349,6 +334,18 @@ class Level {
   
   func resetComboMultiplier() {
     comboMultiplier = 1
+  }
+  
+  func tileAt(column: Int, row: Int) -> Tile? {
+    precondition(column >= 0 && column < numColumns)
+    precondition(row >= 0 && row < numRows)
+    return tiles[column, row]
+  }
+  
+  func cookie(atColumn column: Int, row: Int) -> Cookie? {
+    precondition(column >= 0 && column < numColumns)
+    precondition(row >= 0 && row < numRows)
+    return cookies[column, row]
   }
 }
 
