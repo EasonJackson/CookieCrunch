@@ -99,6 +99,8 @@ class GameViewController: UIViewController {
     skView.presentScene(scene)
     scene.addTiles()
     
+    backgroundMusic?.play()
+    
     beginGame()
   }
   
