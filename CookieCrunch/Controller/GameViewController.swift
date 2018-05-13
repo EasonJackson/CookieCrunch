@@ -68,6 +68,7 @@ class GameViewController: UIViewController {
   @IBOutlet weak var shuffleButton: UIButton!
   
   func beginGame() {
+    level.resetComboMultiplier()
     updateLabels()
     shuffle()
   }
@@ -135,6 +136,7 @@ class GameViewController: UIViewController {
   }
   
   func beginNextTurn() {
+    level.resetComboMultiplier()
     level.detectPossibleSwaps()
     view.isUserInteractionEnabled = true
   }
