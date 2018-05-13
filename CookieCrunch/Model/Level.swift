@@ -40,15 +40,10 @@ class Level {
   var moves = 0
   
   init(filename: String) {
-    // 1
     guard let levelData = LevelData.loadFrom(file: filename) else { return }
-    // 2
     let tilesArray = levelData.tiles
-    // 3
     for (row, rowArray) in tilesArray.enumerated() {
-      // 4
       let tileRow = numRows - row - 1
-      // 5
       for (column, value) in rowArray.enumerated() {
         if value == 1 {
           tiles[column, tileRow] = Tile()
@@ -74,7 +69,6 @@ class Level {
     repeat {
       set = createInitialCookies()
       detectPossibleSwaps()
-      //print("possible swaps: \(possibleSwaps)")
     } while possibleSwaps.count == 0
     
     return set
@@ -82,12 +76,10 @@ class Level {
   
   private func createInitialCookies() -> Set<Cookie> {
     var set: Set<Cookie> = []
-    
-    // 1
     for row in 0..<numRows {
       for column in 0..<numColumns {
         if tiles[column, row] != nil {
-          // 2. Generate random cookie type without making a chain of three.
+          // Generate random cookie type without making a chain of three.
           var cookieType: CookieType
           repeat {
             cookieType = CookieType.random()
@@ -97,11 +89,8 @@ class Level {
             || (row >= 2 &&
               cookies[column, row - 1]?.cookieType == cookieType &&
               cookies[column, row - 2]?.cookieType == cookieType)
-          
-          // 3
           let cookie = Cookie(column: column, row: row, cookieType: cookieType)
           cookies[column, row] = cookie
-          // 4
           set.insert(cookie)
         }
       }
@@ -217,19 +206,14 @@ class Level {
   }
   
   private func detectHorizontalMatches() -> Set<Chain> {
-    // 1
     var set: Set<Chain> = []
-    // 2
     for row in 0..<numRows {
       var column = 0
       while column < numColumns-2 {
-        // 3
         if let cookie = cookies[column, row] {
           let matchType = cookie.cookieType
-          // 4
           if cookies[column + 1, row]?.cookieType == matchType &&
             cookies[column + 2, row]?.cookieType == matchType {
-            // 5
             let chain = Chain(chainType: .horizontal)
             repeat {
               chain.add(cookie: cookies[column, row]!)
@@ -240,7 +224,6 @@ class Level {
             continue
           }
         }
-        // 6
         column += 1
       }
     }
@@ -249,13 +232,11 @@ class Level {
   
   private func detectVerticalMatches() -> Set<Chain> {
     var set: Set<Chain> = []
-    
     for column in 0..<numColumns {
       var row = 0
       while row < numRows-2 {
         if let cookie = cookies[column, row] {
           let matchType = cookie.cookieType
-          
           if cookies[column, row + 1]?.cookieType == matchType &&
             cookies[column, row + 2]?.cookieType == matchType {
             let chain = Chain(chainType: .vertical)
@@ -278,8 +259,6 @@ class Level {
     let horizontalChains = detectHorizontalMatches()
     let verticalChains = detectVerticalMatches()
     
-    //print("Horizontal matches: \(horizontalChains)")
-    //print("Vertical matches: \(verticalChains)")
     removeCookies(in: horizontalChains)
     removeCookies(in: verticalChains)
     calculateScores(for: horizontalChains)
