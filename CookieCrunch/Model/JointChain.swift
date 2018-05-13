@@ -26,57 +26,18 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-class Chain: Hashable, CustomStringConvertible {
-  var cookies: [Cookie] = []
+import Foundation
+
+class JointChain {
+  var verticleChain: Chain
+  var horizontalChain: Chain
   var score = 0
-  var lastSwapIn: Cookie
-  var containsBlast: Bool
+  var joint: Cookie
   
-  enum ChainType: CustomStringConvertible {
-    case horizontal
-    case vertical
-    
-    var description: String {
-      switch self {
-      case .horizontal: return "Horizontal"
-      case .vertical: return "Vertical"
-      }
-    }
+  init(verticleChain: Chain, horizontalChain: Chain, joint: Cookie) {
+    self.verticleChain = verticleChain
+    self.horizontalChain = horizontalChain
+    self.joint = joint
   }
   
-  var chainType: ChainType
-  
-  init(chainType: ChainType, lastSwapIn: Cookie) {
-    self.chainType = chainType
-    self.lastSwapIn = lastSwapIn
-    self.containsBlast = false
-  }
-  
-  func add(cookie: Cookie) {
-    cookies.append(cookie)
-  }
-  
-  func firstCookie() -> Cookie {
-    return cookies[0]
-  }
-  
-  func lastCookie() -> Cookie {
-    return cookies[cookies.count - 1]
-  }
-  
-  var length: Int {
-    return cookies.count
-  }
-  
-  var description: String {
-    return "type:\(chainType) cookies:\(cookies)"
-  }
-  
-  var hashValue: Int {
-    return cookies.reduce (0) { $0.hashValue ^ $1.hashValue }
-  }
-  
-  static func ==(lhs: Chain, rhs: Chain) -> Bool {
-    return lhs.cookies == rhs.cookies
-  }
 }

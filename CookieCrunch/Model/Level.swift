@@ -52,17 +52,17 @@ class Level {
     }
   }
   
-  func shuffle() -> Set<Cookie> {
+  func createInitialCookies() -> Set<Cookie> {
     var set: Set<Cookie>
     repeat {
-      set = createInitialCookies()
+      set = shuffle()
       detectPossibleSwaps()
     } while possibleSwaps.count == 0
     
     return set
   }
   
-  private func createInitialCookies() -> Set<Cookie> {
+  private func shuffle() -> Set<Cookie> {
     var set: Set<Cookie> = []
     for row in 0..<numRows {
       for column in 0..<numColumns {
@@ -84,6 +84,32 @@ class Level {
       }
     }
     return set
+  }
+  
+  func isPossibleSwap(_ swap: Swap) -> Bool {
+    let cookieFrom = swap.cookieA
+    let cookieTo = swap.cookieB
+    
+    if cookieFrom.isBlast && cookieTo.isBlast {
+      return true
+    }
+    
+    if cookieFrom.isBlast && cookieFrom.blastType == BlastType.samekind && hasCookieAround(cookie: cookieFrom)
+      || cookieTo.isBlast && cookieTo.blastType == BlastType.samekind && hasCookieAround(cookie: cookieTo) {
+      return true
+    }
+    return possibleSwaps.contains(swap)
+  }
+  
+  private func hasCookieAround(cookie: Cookie) -> Bool{
+    let row = cookie.row
+    let column = cookie.column
+    if row > 0 && cookies[column, row - 1] != nil || row < numRows - 1 && cookies[column, row + 1] != nil
+      || column > 0 && cookies[column - 1, row] != nil || column < numColumns - 1 && cookies[column + 1, row] != nil {
+      return true
+    }
+    
+    return false
   }
   
   func detectPossibleSwaps() {
@@ -132,10 +158,6 @@ class Level {
     }
     
     possibleSwaps = set
-  }
-  
-  func isPossibleSwap(_ swap: Swap) -> Bool {
-    return possibleSwaps.contains(swap)
   }
   
   func performSwap(_ swap: Swap) {
@@ -272,28 +294,21 @@ class Level {
   
   func fillHoles() -> [[Cookie]] {
     var columns: [[Cookie]] = []
-    // 1
     for column in 0..<numColumns {
       var array: [Cookie] = []
       for row in 0..<numRows {
-        // 2
         if tiles[column, row] != nil && cookies[column, row] == nil {
-          // 3
           for lookup in (row + 1)..<numRows {
             if let cookie = cookies[column, lookup] {
-              // 4
               cookies[column, lookup] = nil
               cookies[column, row] = cookie
               cookie.row = row
-              // 5
               array.append(cookie)
-              // 6
               break
             }
           }
         }
       }
-      // 7
       if !array.isEmpty {
         columns.append(array)
       }
@@ -346,7 +361,7 @@ class Level {
     return tiles[column, row]
   }
   
-  func cookie(atColumn column: Int, row: Int) -> Cookie? {
+  func cookieat(column: Int, row: Int) -> Cookie? {
     precondition(column >= 0 && column < numColumns)
     precondition(row >= 0 && row < numRows)
     return cookies[column, row]

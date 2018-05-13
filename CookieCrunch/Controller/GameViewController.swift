@@ -67,18 +67,6 @@ class GameViewController: UIViewController {
   @IBOutlet weak var scoreLabel: UILabel!
   @IBOutlet weak var shuffleButton: UIButton!
   
-  func beginGame() {
-    level.resetComboMultiplier()
-    updateLabels()
-    shuffle()
-  }
-  
-  func shuffle() {
-    scene.removeAllCookieSprites()
-    let newCookies = level.shuffle()
-    scene.addSprites(for: newCookies)
-  }
-  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -94,7 +82,6 @@ class GameViewController: UIViewController {
     scene.level = level
     scene.swipeHandler = handleSwipe
 
-    
     // Present the scene.
     skView.presentScene(scene)
     scene.addTiles()
@@ -102,6 +89,18 @@ class GameViewController: UIViewController {
     backgroundMusic?.play()
     
     beginGame()
+  }
+  
+  func beginGame() {
+    level.resetComboMultiplier()
+    updateLabels()
+    shuffle()
+  }
+  
+  func shuffle() {
+    scene.removeAllCookieSprites()
+    let newCookies = level.shuffle()
+    scene.addSprites(for: newCookies)
   }
   
   func handleSwipe(_ swap: Swap) {

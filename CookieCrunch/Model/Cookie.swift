@@ -92,12 +92,19 @@ enum CookieMask: Int {
   }
 }
 
+enum BlastType: Int {
+  case none = 0, vertical, horozontal, samekind
+  
+}
+
 // MARK: - Cookie
 class Cookie: CustomStringConvertible, Hashable {
   let cookieType: CookieType
   var cookieMask: CookieMask = CookieMask.Default
   var column: Int
   var row: Int
+  var isBlast: Bool
+  var blastType: BlastType
   var sprite: SKSpriteNode?
   
   var description: String {
@@ -112,6 +119,8 @@ class Cookie: CustomStringConvertible, Hashable {
     self.column = column
     self.row = row
     self.cookieType = cookieType
+    self.isBlast = false
+    self.blastType = BlastType.none
   }
   
   static func ==(lhs: Cookie, rhs: Cookie) -> Bool {
