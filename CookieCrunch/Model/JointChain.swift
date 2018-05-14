@@ -29,13 +29,13 @@
 import Foundation
 
 struct JointChain {
-  var verticleChain: Chain
+  var verticalChain: Chain
   var horizontalChain: Chain
   var score = 0
   var joint: Cookie
   
-  init(verticleChain: Chain, horizontalChain: Chain, joint: Cookie) {
-    self.verticleChain = verticleChain
+  init(verticalChain: Chain, horizontalChain: Chain, joint: Cookie) {
+    self.verticalChain = verticalChain
     self.horizontalChain = horizontalChain
     self.joint = joint
   }

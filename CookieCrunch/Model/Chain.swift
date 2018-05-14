@@ -31,19 +31,6 @@ class Chain: Hashable, CustomStringConvertible {
   var score = 0
   var lastSwapIn: Cookie
   var containsBlast: Bool
-  
-  enum ChainType: CustomStringConvertible {
-    case horizontal
-    case vertical
-    
-    var description: String {
-      switch self {
-      case .horizontal: return "Horizontal"
-      case .vertical: return "Vertical"
-      }
-    }
-  }
-  
   var chainType: ChainType
   
   init(chainType: ChainType, lastSwapIn: Cookie) {
@@ -78,5 +65,18 @@ class Chain: Hashable, CustomStringConvertible {
   
   static func ==(lhs: Chain, rhs: Chain) -> Bool {
     return lhs.cookies == rhs.cookies
+  }
+}
+
+// ENUM ChainType
+enum ChainType: CustomStringConvertible {
+  case horizontal
+  case vertical
+  
+  var description: String {
+    switch self {
+    case .horizontal: return "Horizontal"
+    case .vertical: return "Vertical"
+    }
   }
 }

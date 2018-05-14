@@ -137,6 +137,6 @@ enum CookieMask: Int {
 
 // ENUM Cookie BlastType
 enum BlastType: Int {
-  case none = 0, vertical, horozontal, samekind
+  case none = 0, vertical, horizontal, samekind
   
 }

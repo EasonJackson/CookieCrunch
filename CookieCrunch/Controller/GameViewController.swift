@@ -37,9 +37,9 @@ import AVFoundation
 class GameViewController: UIViewController {
   
   // MARK: Properties
-  
-  // The scene draws the tiles and cookie sprites, and handles swipes.
+  // The scene draws the tiles and cookie sprites, and handles swipes actions from screen touch.
   var scene: GameScene!
+  //The level store all data model, provide mechanism to swap, handle match.
   var level: Level!
   var movesUsed = 0
   var score = 0
@@ -53,7 +53,7 @@ class GameViewController: UIViewController {
     }
     do {
       let player = try AVAudioPlayer(contentsOf: url)
-      player.numberOfLoops = -1
+      player.numberOfLoops = 1
       return player
     } catch {
       return nil
@@ -78,6 +78,7 @@ class GameViewController: UIViewController {
     scene = GameScene(size: skView.bounds.size)
     scene.scaleMode = .aspectFill
     
+    // Create level
     level = Level(filename: "Level_0")
     scene.level = level
     scene.swipeHandler = handleSwipe
@@ -86,23 +87,23 @@ class GameViewController: UIViewController {
     skView.presentScene(scene)
     scene.addTiles()
     
+    // Start background music
     backgroundMusic?.play()
     
+    // Start a new game
     beginGame()
   }
   
+  // Start a new game and reset all properties
   func beginGame() {
     level.resetComboMultiplier()
     updateLabels()
-    shuffle()
-  }
-  
-  func shuffle() {
     scene.removeAllCookieSprites()
     let newCookies = level.createInitialCookies()
     scene.addSprites(for: newCookies)
   }
   
+  // Swap handler func used in scene
   func handleSwipe(_ swap: Swap) {
     view.isUserInteractionEnabled = false
     
@@ -117,7 +118,8 @@ class GameViewController: UIViewController {
   }
   
   func handleMatches() {
-    let chains = level.removeMatches()
+    let chains = level.dealMatches()
+    let blastCookie = level.findPowerCookie()
     if chains.count == 0 {
       beginNextTurn()
       return
@@ -127,17 +129,24 @@ class GameViewController: UIViewController {
         self.score += chain.score
       }
       self.updateLabels()
-      let columns = self.level.fillHoles()
-      self.scene.animateFallingCookies(in: columns) {
-        let columns = self.level.topUpCookies()
-        self.scene.animateNewCookies(in: columns) {
-          self.handleMatches()
+      scene.animatePowerCookies(for: chains) {
+      
+        let columns = self.level.fillHoles()
+        self.scene.animateFallingCookies(in: columns) {
+          let columns = self.level.topUpCookies()
+          self.scene.animateNewCookies(in: columns) {
+            self.handleMatches()
+          }
         }
       }
     }
   }
   
   func beginNextTurn() {
+    repeat {
+      level.shuffle()
+      level.detectPossibleSwaps()
+    } while (level.hasPossibleSwap())
     level.resetComboMultiplier()
     level.detectPossibleSwaps()
     view.isUserInteractionEnabled = true
@@ -167,4 +176,8 @@ class GameViewController: UIViewController {
     return [.portrait, .portraitUpsideDown]
   }
   
+  func shuffle() {
+    scene.animateShuffle()
+    level.shuffle()
+  }
 }

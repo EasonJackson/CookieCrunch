@@ -35,7 +35,7 @@ class Level {
   private var cookies = Array2D<Cookie>(columns: numColumns, rows: numRows)
   private var tiles = Array2D<Tile>(columns: numColumns, rows: numRows)
   private var possibleSwaps: Set<Swap> = []
-  private var swap: Swap?
+  //private var swap: Swap?
   private var comboMultiplier = 1
   var score = 0
   var moves = 0
@@ -54,8 +54,7 @@ class Level {
   }
   
   // Create initial cookies
-  // Return a set of cookies
-  // Call shuffle() function repeatly until no possible chain is in the set
+  // Return a set of cookies for animation
   func createInitialCookies() -> Set<Cookie> {
     var set: Set<Cookie> = []
     for row in 0..<numRows {
@@ -80,50 +79,55 @@ class Level {
     return set
   }
   
-  private func shuffle() -> Set<Cookie> {
-    
-    
+  // Shuffle all the cookies if there is no possible swap
+  func shuffle() -> Set<Cookie> {
+    var renew: Set<Cookie> = []
+    for row in 0..<numRows {
+      for col in 0..<numColumns {
+        if let cookie = cookies[col, row] {
+          if cookie.cookieMask == CookieMask.none && cookie.blastType == BlastType.none {
+            renew.insert(cookie)
+          }
+        }
+      }
+    }
+    // Random relocate cookies
+    while (!renew.isEmpty) {
+      
+    }
   }
   
   // Detect if the swap is valid
+  // Find all possible swaps in the cookies board
+  // Check if the provided swap is in the swap pool
+  func isPossibleSwap(_ swap: Swap) -> Bool {
+    detectPossibleSwaps()
+    return possibleSwaps.contains(swap)
+  }
+  
+  
   // Swap is valid between two cookies if any:
   // 1). Both cookies are blast types
   // 2). At least one of the cookies is a samekind type of blast, while the other one is a cookie without mask
   // 3). After the swap, at least one of them can form a chain of 3 or more
-  func isPossibleSwap(_ swap: Swap) -> Bool {
-    let cookieFrom = swap.cookieA
-    let cookieTo = swap.cookieB
-    
-    if cookieFrom.isBlast && cookieTo.isBlast {
-      return true
-    }
-    
-    if cookieFrom.isBlast && cookieFrom.blastType == BlastType.samekind && cookieTo.cookieMask == CookieMask.none
-      || cookieTo.isBlast && cookieTo.blastType == BlastType.samekind && cookieFrom.cookieMask == CookieMask.none {
-      return true
-    }
-    detectPossibleSwaps(swap)
-    return possibleSwaps.contains(swap)
-  }
-  
-  func detectPossibleSwaps(_ swap: Swap) {
+  func detectPossibleSwaps() {
     var set: Set<Swap> = []
-    
     for row in 0..<numRows {
       for column in 0..<numColumns {
-        if let cookie = cookies[column, row] {
-          
-          // Detection logic goes here
-          // Have a cookie in this spot? If there is no tile, there is no cookie.
+        if let cookie = cookies[column, row] { // Have a cookie in this spot? If there is no tile, there is no cookie.
           if column < numColumns - 1,
             let other = cookies[column + 1, row] {
+            if (cookie.cookieMask != CookieMask.none || other.cookieMask != CookieMask.none) {
+              continue
+            }
             // Swap them
             cookies[column, row] = other
             cookies[column + 1, row] = cookie
             
             // Is either cookie now part of a chain?
             if hasChain(atColumn: column + 1, row: row) ||
-              hasChain(atColumn: column, row: row) {
+              hasChain(atColumn: column, row: row) ||
+              isBlastPair(cookieFrom: cookie, cookieTo: other) {
               set.insert(Swap(cookieA: cookie, cookieB: other))
             }
             
@@ -138,7 +142,8 @@ class Level {
             
             // Is either cookie now part of a chain?
             if hasChain(atColumn: column, row: row + 1) ||
-              hasChain(atColumn: column, row: row) {
+              hasChain(atColumn: column, row: row) ||
+              isBlastPair(cookieFrom: cookie, cookieTo: other) {
               set.insert(Swap(cookieA: cookie, cookieB: other))
             }
             
@@ -150,26 +155,27 @@ class Level {
         }
       }
     }
-    
     possibleSwaps = set
   }
   
-  func performSwap(_ swap: Swap) {
-    self.swap = swap
-    let columnA = swap.cookieA.column
-    let rowA = swap.cookieA.row
-    let columnB = swap.cookieB.column
-    let rowB = swap.cookieB.row
-    
-    cookies[columnA, rowA] = swap.cookieB
-    swap.cookieB.column = columnA
-    swap.cookieB.row = rowA
-    
-    cookies[columnB, rowB] = swap.cookieA
-    swap.cookieA.column = columnB
-    swap.cookieA.row = rowB
+  func hasPossibleSwap() -> Bool {
+    return !possibleSwaps.isEmpty
   }
   
+  // Detect if two neibour cookies are blast pairs
+  // Return true if there are pair of blast
+  private func isBlastPair(cookieFrom: Cookie, cookieTo: Cookie) -> Bool {
+    if cookieFrom.isBlast && cookieTo.isBlast {
+      return true
+    }
+    
+    if cookieFrom.isBlast && cookieFrom.blastType == BlastType.samekind && cookieTo.cookieMask == CookieMask.none
+      || cookieTo.isBlast && cookieTo.blastType == BlastType.samekind && cookieFrom.cookieMask == CookieMask.none {
+      return true
+    }
+  }
+  
+  // Detect if there is a chain at specific position (column, row)
   private func hasChain(atColumn column: Int, row: Int) -> Bool {
     let cookieType = cookies[column, row]!.cookieType
     
@@ -210,29 +216,72 @@ class Level {
     return verticalLength >= 3
   }
   
-  
-  private func findPowerCookies() {
-    let horizontalChains = detectHorizontalMatches(self.swap!)
-    let verticalChains = detectVerticalMatches(self.swap!)
+  // Perform swap with provided swap instance
+  func performSwap(_ swap: Swap) {
+    //self.swap = swap
+    let columnA = swap.cookieA.column
+    let rowA = swap.cookieA.row
+    let columnB = swap.cookieB.column
+    let rowB = swap.cookieB.row
     
-    for chain in horizontalChains {
-      if chain.length > 3 {
-        
+    cookies[columnA, rowA] = swap.cookieB
+    swap.cookieB.column = columnA
+    swap.cookieB.row = rowA
+    
+    cookies[columnB, rowB] = swap.cookieA
+    swap.cookieA.column = columnB
+    swap.cookieA.row = rowB
+  }
+  
+  func dealMatches() -> Set<Chain> {
+    let horizontalChains = detectHorizontalMatches()
+    let verticalChains = detectVerticalMatches()
+    
+    let blaster: Set<Cookie> = findPowerCookies(hChains: horizontalChains, vChains: verticalChains)
+    return removeMatches(hChains: horizontalChains, vChains: verticalChains)
+  }
+  
+  // Detect if there is chain lenght > 3
+  // Replace the lastSwapIn cookie with a corresponding blast version
+  //
+  func findPowerCookies(hChains: Set<Chain>, vChains: Set<Chain>) -> Set<Cookie> {
+    var blaster: Set<Cookie> = []
+    for chain in hChains {
+      if chain.length == 4 {
+        let cookie = Cookie(column: chain.lastSwapIn.column, row: chain.lastSwapIn.row, cookieType: chain.lastSwapIn.cookieType)
+        cookie.blastType = BlastType.horizontal
+        blaster.insert(cookie)
+      } else if chain.length >= 5 {
+        let cookie = Cookie(column: chain.lastSwapIn.column, row: chain.lastSwapIn.row, cookieType: chain.lastSwapIn.cookieType)
+        cookie.blastType = BlastType.samekind
+        blaster.insert(cookie)
       }
     }
-  }
-  
-  func removeMatches() -> Set<Chain> {
     
-    //findPowerCookies(for: horizontalChains)
-    removeCookies(in: horizontalChains)
-    removeCookies(in: verticalChains)
-    calculateScores(for: horizontalChains)
-    calculateScores(for: verticalChains)
-    return horizontalChains.union(verticalChains)
+    for chain in vChains {
+      if chain.length == 4 {
+        let cookie = Cookie(column: chain.lastSwapIn.column, row: chain.lastSwapIn.row, cookieType: chain.lastSwapIn.cookieType)
+        cookie.blastType = BlastType.vertical
+        blaster.insert(cookie)
+      } else if chain.length >= 5 {
+        let cookie = Cookie(column: chain.lastSwapIn.column, row: chain.lastSwapIn.row, cookieType: chain.lastSwapIn.cookieType)
+        cookie.blastType = BlastType.samekind
+        blaster.insert(cookie)
+      }
+    }
+    
+    return blaster
   }
   
-  private func detectHorizontalMatches(_ swap: Swap) -> Set<Chain> {
+  private func removeMatches(hChains: Set<Chain>, vChains: Set<Chain>) -> Set<Chain> {
+    removeCookies(in: hChains)
+    removeCookies(in: vChains)
+    calculateScores(for: hChains)
+    calculateScores(for: vChains)
+    return hChains.union(vChains)
+  }
+  
+  private func detectHorizontalMatches() -> Set<Chain> {
     var set: Set<Chain> = []
     for row in 0..<numRows {
       var column = 0
@@ -257,7 +306,7 @@ class Level {
     return set
   }
   
-  private func detectVerticalMatches(_ swap: Swap) -> Set<Chain> {
+  private func detectVerticalMatches() -> Set<Chain> {
     var set: Set<Chain> = []
     for column in 0..<numColumns {
       var row = 0
@@ -285,6 +334,7 @@ class Level {
   private func removeCookies(in chains: Set<Chain>) {
     for chain in chains {
       for cookie in chain.cookies {
+        
         cookies[cookie.column, cookie.row] = nil
       }
     }
